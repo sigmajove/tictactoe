@@ -51,6 +51,9 @@
   text-align: center;
   width: 160px
 }
+function myfunction() {
+  return "some message";
+}
 </style>
 </head>
 <body>
@@ -65,40 +68,38 @@
   </div>
   <div id="board" style="display:none">
   <div id="square0"></div>
-  <div style="grid-area:b0;">
+  <div id="square1"></div>
+  <div id="square2"></div>
+  <div id="square3"></div>
+  <div id="square4"></div>
+  <div id="square5"></div>
+  <div id="square6"></div>
+  <div id="square7"></div>
+  <div id="square8"></div>
   <svg style="grid-area:b0;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  </div>
-  <div id="square1"></div>
   <svg style="grid-area:b1;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  <div id="square2"></div>
-  <svg style="grid-area:bar0;" width="160" height="5">
-    <rect width="160" height=5 fill="black" />
-  </svg>
-  <div id="square3"></div>
   <svg style="grid-area:b2;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  <div id="square4"></div>
   <svg style="grid-area:b3;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  <div id="square5"></div>
-  <svg style="grid-area:bar1;" width="160" height="5">
-    <rect width="160" height=5 fill="black" />
-  </svg>
-  <div id="square6"></div>
   <svg style="grid-area:b4;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  <div id="square7"></div>
   <svg style="grid-area:b5;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
-  <div id="square8"></div>
+  <svg style="grid-area:bar0;" width="160" height="5">
+    <rect width="160" height="5" fill="black" />
+  </svg>
+  <svg style="grid-area:bar1;" width="160" height="5">
+    <rect width="160" height="5" fill="black" />
+  </svg>
 </div>
 <div id="message" style="display: none">
 </div>
@@ -130,6 +131,7 @@ let gameOver = null;
 let myXO = null;
 let computerX0 = null;
 
+
 function playButton() {
     switch (document.querySelector("input[name=who]:checked").value) {
         case "first":
@@ -159,6 +161,10 @@ function playButton() {
         document.getElementById(`square${i}`).innerHTML =
             board[i] == " " ? squareButton : xSquare;
     }
+    // Add a warning on reload, since that will restart the game.
+    // The value of the string returned does not appear to matter,
+    // and there is no way to change the generic warning message.
+    window.onbeforeunload = () => "";
 }
 
 function restartButton() {
@@ -332,6 +338,7 @@ function clickSquare(id) {
 
     if (checkGameOver(myXO)) {
         gameOver = true;
+        window.onbeforeunload = undefined;
         return;
     }
 
@@ -343,6 +350,7 @@ function clickSquare(id) {
             
         if (checkGameOver(computerXO)) {
             gameOver = true;
+            window.onbeforeunload = undefined;
             return;
         }
     }
