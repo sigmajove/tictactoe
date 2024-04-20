@@ -4,7 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic Tac Toe</title>
+<style>
+#board {
+  grid-template-columns: 50px 5px 50px 5px 50px;
+  grid-template-rows: 50px 5px 50px 5px 50px;
+  grid-gap: 0;
+  grid-template-areas:
+      'c0 b0 c1 b1 c2'
+      'bar0 bar0 bar0 bar0 bar0'
+      'c3 b2 c4 b3 c5'
+      'bar1 bar1 bar1 bar1 bar1'
+      'c6 b4 c7 b5 c8';
+}
+#board div {
+  text-align: center;
+}
+
+#square0 {
+  grid-area: c0
+}
+#square1 {
+  grid-area: c1
+}
+#square2 {
+  grid-area: c2
+}
+#square3 {
+  grid-area: c3
+}
+#square4 {
+  grid-area: c4
+}
+#square5 {
+  grid-area: c5
+}
+#square6 {
+  grid-area: c6
+}
+#square7 {
+  grid-area: c7
+}
+#square8 {
+  grid-area: c8
+}
+#message {
+  text-align: center;
+  width: 160px
+}
+</style>
 </head>
+<body>
+  <h1>Tic-Tac-Toe</h1>
+  <div id="selector" style="visibility: visible">
+  <p>Would you like to go first or second?</p>
+  <input type="radio" id="gofirst" name="who" value="first" checked>
+  <label>First (X)</label><br>
+  <input type="radio" name ="who" value="second">
+  <label>Second (O)</label><br>
+  <div><button onclick="playButton()">Play</button></div>
+  </div>
+  <div id="board" style="display:none">
+  <div id="square0"></div>
+  <div style="grid-area:b0;">
+  <svg style="grid-area:b0;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  </div>
+  <div id="square1"></div>
+  <svg style="grid-area:b1;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  <div id="square2"></div>
+  <svg style="grid-area:bar0;" width="160" height="5">
+    <rect width="160" height=5 fill="black" />
+  </svg>
+  <div id="square3"></div>
+  <svg style="grid-area:b2;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  <div id="square4"></div>
+  <svg style="grid-area:b3;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  <div id="square5"></div>
+  <svg style="grid-area:bar1;" width="160" height="5">
+    <rect width="160" height=5 fill="black" />
+  </svg>
+  <div id="square6"></div>
+  <svg style="grid-area:b4;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  <div id="square7"></div>
+  <svg style="grid-area:b5;" width="5" height="50">
+    <rect width="5" height="50" fill="black" />
+  </svg>
+  <div id="square8"></div>
+</div>
+<div id="message" style="display: none">
+</div>
 <script>
 
 const squareButton = `<button onclick="clickSquare(this.parentElement.id)"
@@ -251,103 +348,5 @@ function clickSquare(id) {
     }
 }
 </script>
-<style>
-#board {
-  grid-template-columns: 50px 5px 50px 5px 50px;
-  grid-template-rows: 50px 5px 50px 5px 50px;
-  grid-gap: 0;
-  grid-template-areas:
-      'c0 b0 c1 b1 c2'
-      'bar0 bar0 bar0 bar0 bar0'
-      'c3 b2 c4 b3 c5'
-      'bar1 bar1 bar1 bar1 bar1'
-      'c6 b4 c7 b5 c8';
-}
-#board div {
-  text-align: center;
-}
-
-#square0 {
-  grid-area: c0
-}
-#square1 {
-  grid-area: c1
-}
-#square2 {
-  grid-area: c2
-}
-#square3 {
-  grid-area: c3
-}
-#square4 {
-  grid-area: c4
-}
-#square5 {
-  grid-area: c5
-}
-#square6 {
-  grid-area: c6
-}
-#square7 {
-  grid-area: c7
-}
-#square8 {
-  grid-area: c8
-}
-#message {
-  text-align: center;
-  width: 160px
-}
-
-</style>
-<body>
-  <h1>Tic-Tac-Toe</h1>
-  <div id="selector" style="visibility: visible">
-  <p>Would you like to go first or second?</p>
-  <input type="radio" id="gofirst" name="who" value="first" checked>
-  <label>First (X)</label><br>
-  <input type="radio" name ="who" value="second">
-  <label>Second (O)</label><br>
-  <div><button onclick="playButton()">Play</button></div>
-  </div>
-
-  <div id="board" style="display:none">
-  <div id="square0"></div>
-  <div style="grid-area:b0;">
-  <svg style="grid-area:b0;" width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  </div>
-  <div id="square1"></div>
-  <svg style="grid-area:b1;" width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  <div id="square2"></div>
-  <svg style="grid-area:bar0; "width="160" heght=5>
-    <rect width="160" height=5 fill="black">
-  </svg>
-  <div id="square3"></div>
-  <svg style="grid-area:b2; "width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  <div id="square4"></div>
-  <svg style="grid-area:b3;" width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  <div id="square5"></div>
-  <svg style="grid-area:bar1;" width="160" height=5>
-    <rect width="160" height=5 fill="black">
-  </svg>
-  <div id="square6"></div>
-  <svg style="grid-area:b4;" width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  <div id="square7"></div>
-  <svg style="grid-area:b5;" width=5 height="50">
-    <rect width=5 height="50" fill="black">
-  </svg>
-  <div id="square8"></div>
-<div id="message" style="display: none">
-</div>
 </body>
 </html>
