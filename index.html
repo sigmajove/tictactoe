@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- Interactive web page that plays Tic-Tac-Toe.
+     The site is this single file, index.html.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,14 +9,15 @@
   <title>Tic Tac Toe</title>
 <style>
 #board {
+  /* Define the layout of the elements that make up the board */
   grid-template-columns: 50px 5px 50px 5px 50px;
   grid-template-rows: 50px 5px 50px 5px 50px;
   grid-gap: 0;
   grid-template-areas:
       'cell0 vbar0 cell1 vbar1 cell2'
-      'bar0 bar0 bar0 bar0 bar0'
+      'hbar0 hbar0 hbar0 hbar0 hbar0'
       'cell3 vbar2 cell4 vbar3 cell5'
-      'bar1 bar1 bar1 bar1 bar1'
+      'hbar1 hbar1 hbar1 hbar1 hbar1'
       'cell6 vbar4 cell7 vbar5 cell8';
 }
 #message {
@@ -23,25 +27,17 @@
 </style>
 </head>
 <body>
-  <h1>Tic-Tac-Toe</h1>
-  <div id="selector" style="visibility: visible">
-  <p>Would you like to go first or second?</p>
-  <input type="radio" id="gofirst" name="who" value="first" checked>
-  <label>First (X)</label><br>
-  <input type="radio" name ="who" value="second">
-  <label>Second (O)</label><br>
-  <div><button onclick="playButton()">Play</button></div>
-  </div>
-  <div id="board" style="display:none">
-  <svg style="grid-area:bar0;" width="160" height="5">
-    <rect width="160" height="5" fill="black" />
-  </svg>
-  <svg style="grid-area:bar1;" width="160" height="5">
-    <rect width="160" height="5" fill="black" />
-  </svg>
+<h1>Tic-Tac-Toe</h1>
+<div id="selector" style="visibility: visible">
+<p>Would you like to go first or second?</p>
+<input type="radio" name="who" value="first" checked>
+<label>First (X)</label><br>
+<input type="radio" name ="who" value="second">
+<label>Second (O)</label><br>
+<div><button onclick="playButton()">Play</button></div>
 </div>
-<div id="message" style="display: none">
-</div>
+<div id="board" style="display:none"></div>
+<div id="message" style="display: none"></div>
 <script>
 
 function squareButton(i) { return `<button onclick="clickSquare(${i})"
@@ -62,9 +58,10 @@ style="fill:none;stroke:blue;stroke-width:4" />
 
 const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
 
-// Representation of the board. Values are "X", "O", and " ".
-// Redundant with objects in the Dom.
+// Array representation of the board. Values are "X", "O", and " ".
+// It is kept consistent with the cell elements in the DOM.
 let board = null;
+
 let gameOver = null;
 
 // Which players are which. The values are "X" or "O".
@@ -76,34 +73,51 @@ function svgElement(tag) {
     return  document.createElementNS("http://www.w3.org/2000/svg", tag);
 }
 
+// Creates the pieces that make up the black lines of the board.
+function blackRectangle(position, width, height) {
+    const el = svgElement("svg");
+    el.style = position;
+    el.setAttribute("width", width);
+    el.setAttribute("height", height);
+
+    const rect = svgElement("rect");
+    el.appendChild(rect);
+    rect.setAttribute("width", width);
+    rect.setAttribute("height", height);
+    rect.setAttribute("fill", "black");
+
+    return el;
+}
+
+// Will contain references to the nine cell elements in the board.
 let cells = []
 {
     // Create the board.
     const board = document.getElementById("board");
-    const before = board.firstChild;
+
+    // The order does not matter here, since each element gets
+    // a grid-area style that specifies its position in the grid.
+
+    // Create the cells, containers that will hold buttons, Xs or Os.
     for (let i = 0; i < 9; ++i) {
         const el = document.createElement("div");
         el.style =`grid-area:cell${i}`;
         cells.push(el);
-        board.insertBefore(el, before)   
+        board.appendChild(el);
     }
 
     // Create the vertical bars that separate the cells on each row.
     for (let i = 0; i < 6; ++i) {
-        const el = svgElement("svg");
-        el.style = `grid-area:vbar${i}`;
-        el.setAttribute("width", "5");
-        el.setAttribute("height", "50");
-        board.insertBefore(el, before);
+        board.appendChild(blackRectangle(`grid-area:vbar${i}`, "5", "50"));
+    }
 
-        const rect = svgElement("rect");
-        el.appendChild(rect);
-        rect.setAttribute("width", "5");
-        rect.setAttribute("height", "50");
-        rect.setAttribute("fill", "black");
+    // Create the horizonal bars that separate the cells on each row.
+    for (let i = 0; i < 2; ++i) {
+        board.appendChild(blackRectangle(`grid-area:hbar${i}`, "160", "5"));
     }
 }
 
+// Function invoked by the initial dialog. It initializes and starts the game.
 function playButton() {
     switch (document.querySelector("input[name=who]:checked").value) {
         case "first":
@@ -119,16 +133,19 @@ function playButton() {
     gameOver = false;
     board = Array.from(" ".repeat(9));
     if (myXO == "O") {
+        // It does not matter where the first move goes.
         board[Math.floor(Math.random() * 9)] = "X";
     }
     document.getElementById("message").innerHTML =
         "<p>Click on a square to make a move</p>";
 
+    // Turn off the selector and turn on the board and message.
     document.getElementById("selector").style.display = "none";
     document.getElementById("board").style.display = "grid";
     document.getElementById("message").style.display = "block";
 
-    for (let i = 0; i < 9; ++i) {
+    // Initialize the board.
+    for (let i = 0; i < cells.length; ++i) {
         cells[i].innerHTML = board[i] == " " ? squareButton(i) : xSquare;
     }
 
@@ -144,12 +161,12 @@ function restartButton() {
     document.getElementById("message").style.display = "none";
 }
 
-// Rotates a board 90 degrees counterclockwise.
+// Rotates a board string 90 degrees counterclockwise.
 function rotate(b) {
     return `${b[2]}${b[5]}${b[8]}${b[1]}${b[4]}${b[7]}${b[0]}${b[3]}${b[6]}`;
 
 }
-// Returns the mirror image of a board.
+// Returns the mirror image of a board string.
 function mirror(b) {
     return `${b[2]}${b[1]}${b[0]}${b[5]}${b[4]}${b[3]}${b[8]}${b[7]}${b[6]}`;
 }
@@ -173,7 +190,7 @@ function symmetry(func, board) {
 // The strategy table.
 let goodMoves = new Map();
 
-// Adds an entry to the stategy table.
+// Adds the moves dictated by an one of the strategy patterns.
 function addGoodMoves(board) {
     let moves = [];
     let boardArr = board.split("");
@@ -187,25 +204,32 @@ function addGoodMoves(board) {
     goodMoves.set(boardArr.join(""), moves);
 }               
 
-// Each string represents the nine squares 012345678
-// Each $ represents an acceptable next move.
-// Each good move has eight reflections and rotations.
-// If a board position is not listed, then it doesn't matter.
-const patterns = [
-"X   $    ", "XO $$ $  ", "XOX $    ", "XOXO$   $", "XOXO$  X$", "XOXO  OX$",
-"XOX   O $", "XOXX  O$ ", "XOX $$OX$", "XO X$ O  ", "XO X$$OX$", "XO $X $ O",
-"XO  $X   ", "XOO$$X$$ ", "XOOO X X$", "XOO$ X XO", "XO O X  $", "XO O X X$",
-"XO OOX X$", "XO  OX$X$", "XO  $XO $", "XO  $XOX$", "XO $ X  O", "XO $$X$XO",
-"XO    $X$", "XOO$ $$X$", "XO  O $X ", "XO   O$X$", "X O$  $ $", "XXO  $  $",
-"XXO   $O$", "XXO  X$O ", "XXO  X$ O", "X O$$X   ", "X O$$X O ", "X O$ X  O",
-"X O$$X XO", "X O    X$", "X$$ OX $$", "X$$ OX$$O", "X$ $O$ $X", "X $ $O$  ",
-"X   $O X ", "X $   $ O", "X $ X $ O", "X  $$X$ O", "$X$ $  $ ", "OX $$ $ $",
-"OX X$$ $ ", "OXOX$    ", "OX$X$O $$", "OX $X$$O$", "OX   X$  ", "OX $$X$O$",
-"$X O$    ", "$X$OX  O ", " X OXX$O ", " X$O X  $", " X$OOX   ", "$X OOX$X ",
-" X$O X O ", "$X$$O$$ $", "$X$XO $  ", "$X    O  ", "$X   XO $", "$X$ X $O$",
-"$ $ X $ $", "$O$$X$$ $"];
-for (let i = 0; i < patterns.length; ++i) {
-    symmetry((b) => {addGoodMoves(b);}, patterns[i]);
+{
+    // Each string represents the nine squares 012345678
+    // Each $ represents an acceptable next move.
+    // Each good move has eight reflections and rotations.
+    // If a board position is not listed, then any move is acceptable.
+    const patterns = [
+        "X   $    ", "XO $$ $  ", "XOX $    ", "XOXO$   $", "XOXO$  X$",
+        "XOXO  OX$", "XOX   O $", "XOXX  O$ ", "XOX $$OX$", "XO X$ O  ",
+        "XO X$$OX$", "XO $X $ O", "XO  $X   ", "XOO$$X$$ ", "XOOO X X$",
+        "XOO$ X XO", "XO O X  $", "XO O X X$", "XO OOX X$", "XO  OX$X$",
+        "XO  $XO $", "XO  $XOX$", "XO $ X  O", "XO $$X$XO", "XO    $X$",
+        "XOO$ $$X$", "XO  O $X ", "XO   O$X$", "X O$  $ $", "XXO  $  $",
+        "XXO   $O$", "XXO  X$O ", "XXO  X$ O", "X O$$X   ", "X O$$X O ",
+        "X O$ X  O", "X O$$X XO", "X O    X$", "X$$ OX $$", "X$$ OX$$O",
+        "X$ $O$ $X", "X $ $O$  ", "X   $O X ", "X $   $ O", "X $ X $ O",
+        "X  $$X$ O", "$X$ $  $ ", "OX $$ $ $", "OX X$$ $ ", "OXOX$    ",
+        "OX$X$O $$", "OX $X$$O$", "OX   X$  ", "OX $$X$O$", "$X O$    ",
+        "$X$OX  O ", " X OXX$O ", " X$O X  $", " X$OOX   ", "$X OOX$X ",
+        " X$O X O ", "$X$$O$$ $", "$X$XO $  ", "$X    O  ", "$X   XO $",
+        "$X$ X $O$", "$ $ X $ $", "$O$$X$$ $",
+    ];
+    for (let i = 0; i < patterns.length; ++i) {
+        symmetry((b) => {
+            addGoodMoves(b);
+        }, patterns[i]);
+    }
 }
 
 function checkRows(func) {
