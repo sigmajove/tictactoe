@@ -16,33 +16,6 @@
       'bar1 bar1 bar1 bar1 bar1'
       'cell6 b4 cell7 b5 cell8';
 }
-#square0 {
-  grid-area: cell0
-}
-#square1 {
-  grid-area: cell1
-}
-#square2 {
-  grid-area: cell2
-}
-#square3 {
-  grid-area: cell3
-}
-#square4 {
-  grid-area: cell4
-}
-#square5 {
-  grid-area: cell5
-}
-#square6 {
-  grid-area: cell6
-}
-#square7 {
-  grid-area: cell7
-}
-#square8 {
-  grid-area: cell8
-}
 #message {
   text-align: center;
   width: 160px
@@ -123,6 +96,7 @@ let cells = []
     const before = board.firstChild;
     for (let i = 0; i < 9; i++) {
         const el = document.createElement("div");
+        el.setAttribute("style", `grid-area:cell${i}`);
         cells.push(el);
         board.insertBefore(el, before)   
     }
@@ -153,7 +127,7 @@ function playButton() {
     document.getElementById("message").style.display = "block";
 
     for (let i = 0; i < 9; i++) {
-        cells(i).innerHTML = board[i] == " " ? squareButton(i) : xSquare;
+        cells[i].innerHTML = board[i] == " " ? squareButton(i) : xSquare;
     }
 
     // Add a warning on reload, since that will restart the game.
@@ -323,12 +297,11 @@ function clickSquare(id) {
     if (gameOver) {
         return;
     }
-    let num = parseInt(id.charAt(id.length - 1));
-    if (board[num] != " ") {
+    if (board[id] != " ") {
         return;
     }
-    board[num] = myXO;
-    cells(id).innerHTML = myXO == "X" ? xSquare : oSquare;
+    board[id] = myXO;
+    cells[id].innerHTML = myXO == "X" ? xSquare : oSquare;
 
     if (checkGameOver(myXO)) {
         gameOver = true;
@@ -339,8 +312,7 @@ function clickSquare(id) {
     m = getComputerMove();
     if (m !== null) {
         board[m] = computerXO;
-        document.getElementById(`square${m}`).innerHTML =
-            computerXO == "X" ? xSquare : oSquare;
+        cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
             
         if (checkGameOver(computerXO)) {
             gameOver = true;
