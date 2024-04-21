@@ -81,7 +81,7 @@ let cells = []
     // Create the board.
     const board = document.getElementById("board");
     const before = board.firstChild;
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; ++i) {
         const el = document.createElement("div");
         el.style =`grid-area:cell${i}`;
         cells.push(el);
@@ -89,7 +89,7 @@ let cells = []
     }
 
     // Create the vertical bars that separate the cells on each row.
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 6; ++i) {
         const el = svgElement("svg");
         el.style = `grid-area:vbar${i}`;
         el.setAttribute("width", "5");
@@ -128,7 +128,7 @@ function playButton() {
     document.getElementById("board").style.display = "grid";
     document.getElementById("message").style.display = "block";
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; ++i) {
         cells[i].innerHTML = board[i] == " " ? squareButton(i) : xSquare;
     }
 
@@ -157,20 +157,16 @@ function mirror(b) {
 // Calls func on the eight symmetric variations on board.
 function symmetry(func, board) {
     let b = board;
-    func(b);
-    b = rotate(b);
-    func(b);
-    b = rotate(b);
-    func(b);
-    b = rotate(b);
+    rotate3 = () => {
+        for (let i = 0; i < 3; ++i) {
+            func(b);
+            b = rotate(b);
+        };
+    }
+    rotate3();
     func(b);
     b = mirror(b);
-    func(b);
-    b = rotate(b);
-    func(b);
-    b = rotate(b);
-    func(b);
-    b = rotate(b);
+    rotate3();
     func(b);
 }
 
@@ -180,7 +176,7 @@ function addToMap(board) {
     let moves = [];
     let boardArr = board.split("");
 
-    for (let i = 0; i < boardArr.length; i++) {
+    for (let i = 0; i < boardArr.length; ++i) {
         if (boardArr[i] == "$") {
             moves.push(i);
             boardArr[i] = " ";
@@ -207,9 +203,10 @@ const patterns = [
 "$X O$    ", "$X$OX  O ", " X OXX$O ", " X$O X  $", " X$OOX   ", "$X OOX$X ",
 " X$O X O ", "$X$$O$$ $", "$X$XO $  ", "$X    O  ", "$X   XO $", "$X$ X $O$",
 "$ $ X $ $", "$O$$X$$ $"];
-for (let i = 0; i < patterns.length; i++) {
+for (let i = 0; i < patterns.length; ++i) {
     symmetry((b) => {addToMap(b);}, patterns[i]);
 }
+console.log("table contains", goodMoves.size);
 
 function checkRows(func) {
     // Calls func on horizontal, vertical, and diagonal rows.
@@ -238,7 +235,7 @@ function checkGameOver(who) {
                     `<h3>${who} wins ${restartHTML}</h3>`;
         return true;
     }
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; ++i) {
         if (board[i] == " ") {
             return false;
         }
@@ -283,7 +280,7 @@ function getComputerMove() {
     // If not, just pick an empty square.
     if (moves === undefined) {
         moves = [];
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < 9; ++i) {
             if (board[i] == " ") {
                 moves.push(i);
             }
