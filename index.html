@@ -63,10 +63,13 @@ const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
 let board = null;
 
 let gameOver = null;
+let working = false;
 
 // Which players are which. The values are "X" or "O".
 let myXO = null;
 let computerX0 = null;
+
+const prompt = "<p>Click on a square to make a move</p>";
 
 function svgElement(tag) {
     // SVG nodes must be created using a namespace.
@@ -136,8 +139,7 @@ function playButton() {
         // It does not matter where the first move goes.
         board[Math.floor(Math.random() * 9)] = "X";
     }
-    document.getElementById("message").innerHTML =
-        "<p>Click on a square to make a move</p>";
+    document.getElementById("message").innerHTML = prompt;
 
     // Turn off the selector and turn on the board and message.
     document.getElementById("selector").style.display = "none";
@@ -318,12 +320,13 @@ function getComputerMove() {
 
 // Invoked when the user clicks on a square.
 function clickSquare(id) {
-    if (gameOver) {
+    if (working || gameOver) {
         return;
     }
     if (board[id] != " ") {
         return;
     }
+
     board[id] = myXO;
     cells[id].innerHTML = myXO == "X" ? xSquare : oSquare;
 
@@ -335,16 +338,27 @@ function clickSquare(id) {
 
     m = getComputerMove();
     if (m !== null) {
-        board[m] = computerXO;
-        cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
-            
-        if (checkGameOver(computerXO)) {
-            gameOver = true;
-            window.onbeforeunload = undefined;
-            return;
-        }
+        // Pretend it takes the computer a while.
+        // It's visually more appealing.
+        working = true;
+        document.getElementById("message").innerHTML = "<p>working...<\p>";
+        setTimeout(function() {displayComputerMove(m)}, 500);
     }
 }
+
+function displayComputerMove(m) {
+    board[m] = computerXO;
+    cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
+    working = false;
+            
+    if (checkGameOver(computerXO)) {
+        gameOver = true;
+        window.onbeforeunload = undefined;
+    } else {
+        document.getElementById("message").innerHTML = prompt;
+    }
+}
+
 </script>
 </body>
 </html>
