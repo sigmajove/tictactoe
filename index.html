@@ -210,21 +210,20 @@ function addGoodMoves(board) {
     // Each good move has eight reflections and rotations.
     // If a board position is not listed, then any move is acceptable.
     const patterns = [
-        "X   $    ", "XO $$ $  ", "XOX $    ", "XOXO$   $", "XOXO$  X$",
-        "XOXO  OX$", "XOX   O $", "XOXX  O$ ", "XOX $$OX$", "XO X$ O  ",
-        "XO X$$OX$", "XO $X $ O", "XO  $X   ", "XOO$$X$$ ", "XOOO X X$",
-        "XOO$ X XO", "XO O X  $", "XO O X X$", "XO OOX X$", "XO  OX$X$",
-        "XO  $XO $", "XO  $XOX$", "XO $ X  O", "XO $$X$XO", "XO    $X$",
-        "XOO$ $$X$", "XO  O $X ", "XO   O$X$", "X O$  $ $", "XXO  $  $",
-        "XXO   $O$", "XXO  X$O ", "XXO  X$ O", "X O$$X   ", "X O$$X O ",
-        "X O$ X  O", "X O$$X XO", "X O    X$", "X$$ OX $$", "X$$ OX$$O",
-        "X$ $O$ $X", "X $ $O$  ", "X   $O X ", "X $   $ O", "X $ X $ O",
-        "X  $$X$ O", "$X$ $  $ ", "OX $$ $ $", "OX X$$ $ ", "OXOX$    ",
-        "OX$X$O $$", "OX $X$$O$", "OX   X$  ", "OX $$X$O$", "$X O$    ",
-        "$X$OX  O ", " X OXX$O ", " X$O X  $", " X$OOX   ", "$X OOX$X ",
-        " X$O X O ", "$X$$O$$ $", "$X$XO $  ", "$X    O  ", "$X   XO $",
-        "$X$ X $O$", "$ $ X $ $", "$O$$X$$ $",
-    ];
+        "X   $    ", "X   $O X ", "X  $$X$ O", "X $   $ O", "X $ $O$  ",
+        "X $ X $ O", "X O    X$", "X O$  $ $", "X O$ X  O", "X O$$X   ",
+        "X O$$X O ", "X O$$X XO", "X$ $O$ $X", "X$$ OX $$", "X$$ OX$$O",
+        "XO    $X$", "XO   O$X$", "XO  $X   ", "XO  $XO $", "XO  $XOX$",
+        "XO  O $X ", "XO  OX$X$", "XO $ X  O", "XO $$ $  ", "XO $$X$XO",
+        "XO $X $ O", "XO O X  $", "XO O X X$", "XO OOX X$", "XO X$ O  ",
+        "XO X$$OX$", "XOO$ $$X$", "XOO$ X XO", "XOO$$X$$ ", "XOOO X X$",
+        "XOX   O $", "XOX $    ", "XOX $$OX$", "XOXO  OX$", "XOXO$   $",
+        "XOXO$  X$", "XOXX  O$ ", "XXO   $O$", "XXO  $  $", "XXO  X$ O",
+        "XXO  X$O ", "OX   X$  ", "OX $$ $ $", "OX $$X$O$", "OX $X$$O$",
+        "OX X$$ $ ", "OX$X$O $$", "OXOX$    ", " X OXX$O ", " X$O X  $",
+        " X$O X O ", " X$OOX   ", "$ $ X $ $", "$O$$X$$ $", "$X    O  ",
+        "$X   XO $", "$X O$    ", "$X OOX$X ", "$X$ $  $ ", "$X$ X $O$",
+        "$X$$O$$ $", "$X$OX  O ", "$X$XO $  " ];
     for (let i = 0; i < patterns.length; ++i) {
         symmetry((b) => {
             addGoodMoves(b);
@@ -232,8 +231,8 @@ function addGoodMoves(board) {
     }
 }
 
+// Calls func on horizontal, vertical, and diagonal rows.
 function checkRows(func) {
-    // Calls func on horizontal, vertical, and diagonal rows.
     func(0, 1, 2);
     func(3, 4, 5);
     func(6, 7, 8);
@@ -270,9 +269,9 @@ function checkGameOver(who) {
     return true;
 }
 
+// If a row contains two whos in a row and a space, returns
+// the index of the space. Returns every such index, may be empty.
 function checkTwoInARow(who) {
-    // If a row contains two whos in a row and a space, return
-    // the index of the space. Return every such index.
     let moves = []
     checkRows((x, y, z) => {
         let bx = board[x];
@@ -288,6 +287,7 @@ function checkTwoInARow(who) {
     return moves;
 }
 
+// Returns all the possible good computer moves from this position.
 function getComputerMove() {
     // See if it can win right now.
     let moves = checkTwoInARow(computerXO);
@@ -316,6 +316,7 @@ function getComputerMove() {
         moves[Math.floor(Math.random() * moves.length)];
 }
 
+// Invoked when the user clicks on a square.
 function clickSquare(id) {
     if (gameOver) {
         return;
