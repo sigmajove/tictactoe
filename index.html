@@ -10,11 +10,11 @@
   grid-template-rows: 50px 5px 50px 5px 50px;
   grid-gap: 0;
   grid-template-areas:
-      'cell0 b0 cell1 b1 cell2'
+      'cell0 vbar0 cell1 vbar1 cell2'
       'bar0 bar0 bar0 bar0 bar0'
-      'cell3 b2 cell4 b3 cell5'
+      'cell3 vbar2 cell4 vbar3 cell5'
       'bar1 bar1 bar1 bar1 bar1'
-      'cell6 b4 cell7 b5 cell8';
+      'cell6 vbar4 cell7 vbar5 cell8';
 }
 #message {
   text-align: center;
@@ -33,24 +33,6 @@
   <div><button onclick="playButton()">Play</button></div>
   </div>
   <div id="board" style="display:none">
-  <svg style="grid-area:b0;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
-  <svg style="grid-area:b1;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
-  <svg style="grid-area:b2;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
-  <svg style="grid-area:b3;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
-  <svg style="grid-area:b4;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
-  <svg style="grid-area:b5;" width="5" height="50">
-    <rect width="5" height="50" fill="black" />
-  </svg>
   <svg style="grid-area:bar0;" width="160" height="5">
     <rect width="160" height="5" fill="black" />
   </svg>
@@ -89,6 +71,11 @@ let gameOver = null;
 let myXO = null;
 let computerX0 = null;
 
+function svgElement(tag) {
+    // SVG nodes must be created using a namespace.
+    return  document.createElementNS("http://www.w3.org/2000/svg", tag);
+}
+
 let cells = []
 {
     // Create the board.
@@ -96,9 +83,24 @@ let cells = []
     const before = board.firstChild;
     for (let i = 0; i < 9; i++) {
         const el = document.createElement("div");
-        el.setAttribute("style", `grid-area:cell${i}`);
+        el.style =`grid-area:cell${i}`;
         cells.push(el);
         board.insertBefore(el, before)   
+    }
+
+    // Create the vertical bars that separate the cells on each row.
+    for (let i = 0; i < 6; i++) {
+        const el = svgElement("svg");
+        el.style = `grid-area:vbar${i}`;
+        el.setAttribute("width", "5");
+        el.setAttribute("height", "50");
+        board.insertBefore(el, before);
+
+        const rect = svgElement("rect");
+        el.appendChild(rect);
+        rect.setAttribute("width", "5");
+        rect.setAttribute("height", "50");
+        rect.setAttribute("fill", "black");
     }
 }
 
