@@ -170,9 +170,11 @@ function symmetry(func, board) {
     func(b);
 }
 
+// The strategy table.
 let goodMoves = new Map();
 
-function addToMap(board) {
+// Adds an entry to the stategy table.
+function addGoodMoves(board) {
     let moves = [];
     let boardArr = board.split("");
 
@@ -185,11 +187,10 @@ function addToMap(board) {
     goodMoves.set(boardArr.join(""), moves);
 }               
 
-// Strategy table.
 // Each string represents the nine squares 012345678
 // Each $ represents an acceptable next move.
-// Each string represents eight reflections and rotations.
-// If a board position is not listed,  then it doesn't matter.
+// Each good move has eight reflections and rotations.
+// If a board position is not listed, then it doesn't matter.
 const patterns = [
 "X   $    ", "XO $$ $  ", "XOX $    ", "XOXO$   $", "XOXO$  X$", "XOXO  OX$",
 "XOX   O $", "XOXX  O$ ", "XOX $$OX$", "XO X$ O  ", "XO X$$OX$", "XO $X $ O",
@@ -204,9 +205,8 @@ const patterns = [
 " X$O X O ", "$X$$O$$ $", "$X$XO $  ", "$X    O  ", "$X   XO $", "$X$ X $O$",
 "$ $ X $ $", "$O$$X$$ $"];
 for (let i = 0; i < patterns.length; ++i) {
-    symmetry((b) => {addToMap(b);}, patterns[i]);
+    symmetry((b) => {addGoodMoves(b);}, patterns[i]);
 }
-console.log("table contains", goodMoves.size);
 
 function checkRows(func) {
     // Calls func on horizontal, vertical, and diagonal rows.
