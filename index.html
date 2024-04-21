@@ -60,15 +60,6 @@
   <div><button onclick="playButton()">Play</button></div>
   </div>
   <div id="board" style="display:none">
-  <div id="square0"></div>
-  <div id="square1"></div>
-  <div id="square2"></div>
-  <div id="square3"></div>
-  <div id="square4"></div>
-  <div id="square5"></div>
-  <div id="square6"></div>
-  <div id="square7"></div>
-  <div id="square8"></div>
   <svg style="grid-area:b0;" width="5" height="50">
     <rect width="5" height="50" fill="black" />
   </svg>
@@ -98,10 +89,11 @@
 </div>
 <script>
 
-const squareButton = `<button onclick="clickSquare(this.parentElement.id)"
+function squareButton(i) { return `<button onclick="clickSquare(${i})"
 style="display:block; background: transparent; border: none !important;
 font-size:0; height:50px; width:50px;">
-</button>`
+</button>`;
+}
 
 const xSquare = `<svg width="50" height="50">
 <path d="M 5 5 L 45 45 M 45 5 L 5 45"
@@ -124,6 +116,17 @@ let gameOver = null;
 let myXO = null;
 let computerX0 = null;
 
+let cells = []
+{
+    // Create the board.
+    const board = document.getElementById("board");
+    const before = board.firstChild;
+    for (let i = 0; i < 9; i++) {
+        const el = document.createElement("div");
+        cells.push(el);
+        board.insertBefore(el, before)   
+    }
+}
 
 function playButton() {
     switch (document.querySelector("input[name=who]:checked").value) {
@@ -149,11 +152,10 @@ function playButton() {
     document.getElementById("board").style.display = "grid";
     document.getElementById("message").style.display = "block";
 
-
     for (let i = 0; i < 9; i++) {
-        document.getElementById(`square${i}`).innerHTML =
-            board[i] == " " ? squareButton : xSquare;
+        cells(i).innerHTML = board[i] == " " ? squareButton(i) : xSquare;
     }
+
     // Add a warning on reload, since that will restart the game.
     // The value of the string returned does not appear to matter,
     // and there is no way to change the generic warning message.
@@ -213,8 +215,8 @@ function addToMap(board) {
 
 // Strategy table.
 // Each string represents the nine squares 012345678
-// Each $ represents an acceptable response.
-// Each entry represents eight reflections and rotations.
+// Each $ represents an acceptable next move.
+// Each string represents eight reflections and rotations.
 // If a board position is not listed,  then it doesn't matter.
 const patterns = [
 "X   $    ", "XO $$ $  ", "XOX $    ", "XOXO$   $", "XOXO$  X$", "XOXO  OX$",
@@ -326,8 +328,7 @@ function clickSquare(id) {
         return;
     }
     board[num] = myXO;
-    document.getElementById(id).innerHTML =
-        myXO == "X" ? xSquare : oSquare;
+    cells(id).innerHTML = myXO == "X" ? xSquare : oSquare;
 
     if (checkGameOver(myXO)) {
         gameOver = true;
