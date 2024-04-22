@@ -330,8 +330,24 @@ function clickSquare(id) {
         // Pretend it takes the computer a while.
         // It's visually more appealing.
         working = true;
-        document.getElementById("message").innerHTML = "<p>working...<\p>";
-        setTimeout(function() {displayComputerMove(m)}, 500);
+        document.getElementById("message").innerHTML =
+`<div style="height:10px; background-color:transparent;"></div>
+<div style="width:160px; background-color:#ddd;">
+<div id="progressBar" style="width:0; height:15px; background-color:#5c9ec4;">
+</div>
+</div>`
+         bar = document.getElementById("progressBar");
+         var progress = 0
+            const interval = setInterval(() => {
+                 progress += 3;
+                 if (progress > 100) {
+                   clearInterval(interval);
+                   displayComputerMove(m);
+                   working = false;
+                 } else {
+                   bar.style.width = `${progress}%`;
+                 }
+         }, 10);
     }
 }
 
