@@ -327,8 +327,8 @@ function clickSquare(id) {
 
     m = getComputerMove();
     if (m !== null) {
-        // Pretend it takes the computer a while.
-        // It's visually more appealing.
+        // Put up a fake progress bar to separate the player move
+        // from the computer move.
         working = true;
         document.getElementById("message").innerHTML =
 `<div style="height:10px; background-color:transparent;"></div>
