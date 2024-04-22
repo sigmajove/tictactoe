@@ -46,14 +46,16 @@ font-size:0; height:50px; width:50px;">
 </button>`;
 }
 
-const xSquare = `<svg width="50" height="50">
-<path d="M 5 5 L 45 45 M 45 5 L 5 45"
-style="stroke:blue;stroke-width:4" />
+const svgHdr =
+    `<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">` 
+
+const xSquare = `${svgHdr} 
+<path d="M 5 5 L 45 45 M 45 5 L 5 45" style="stroke:blue; stroke-width:4" />
 </svg>`
 
-const oSquare = `<svg style="width="50" height="50">
+const oSquare = `${svgHdr}
 <ellipse cx="25" cy="25", rx="20", ry="20"
-style="fill:none;stroke:blue;stroke-width:4" />
+style="fill:none; stroke:blue; stroke-width:4" />
 </svg>`
 
 const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
@@ -71,24 +73,11 @@ let computerX0 = null;
 
 const prompt = "<p>Click on a square to make a move</p>";
 
-function svgElement(tag) {
-    // SVG nodes must be created using a namespace.
-    return  document.createElementNS("http://www.w3.org/2000/svg", tag);
-}
-
 // Creates the pieces that make up the black lines of the board.
 function blackRectangle(position, width, height) {
-    const el = svgElement("svg");
-    el.style = position;
-    el.setAttribute("width", width);
-    el.setAttribute("height", height);
-
-    const rect = svgElement("rect");
-    el.appendChild(rect);
-    rect.setAttribute("width", width);
-    rect.setAttribute("height", height);
-    rect.setAttribute("fill", "black");
-
+    const el = document.createElement("div");
+    el.style =
+    `${position}; width:${width}px; height:{$height}px; background-color:black;`
     return el;
 }
 
