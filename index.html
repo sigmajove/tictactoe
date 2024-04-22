@@ -332,11 +332,11 @@ function clickSquare(id) {
         working = true;
         document.getElementById("message").innerHTML =
 `<div style="height:10px; background-color:transparent;"></div>
-<div style="width:160px; background-color:#ddd;">
+<div style="background-color:#ddd;">
 <div id="progressBar" style="width:0; height:15px; background-color:#5c9ec4;">
 </div>
 </div>`
-         bar = document.getElementById("progressBar");
+         const bar = document.getElementById("progressBar");
          var progress = 0
             const interval = setInterval(() => {
                  progress += 3;
