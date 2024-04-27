@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Interactive web page that plays Tic-Tac-Toe.
-     The site is this single file, index.html.
+     The site is this single file.
 -->
 <html lang="en">
 <head>
@@ -51,15 +51,18 @@ font-size:0; height:50px; width:50px;">
 const svgHdr =
     `<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">` 
 
+// Use Scalable Vector Graphics to an X on the board.
 const xSquare = `${svgHdr} 
 <path d="M 5 5 L 45 45 M 45 5 L 5 45" style="stroke:blue; stroke-width:4" />
 </svg>`
 
+// Use Scalable Vector Graphics to an O on the board.
 const oSquare = `${svgHdr}
 <ellipse cx="25" cy="25", rx="20", ry="20"
 style="fill:none; stroke:blue; stroke-width:4" />
 </svg>`
 
+// Displayed when the game is over.
 const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
 
 // Array representation of the board. Values are "X", "O", and " ".
@@ -67,13 +70,16 @@ const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
 let board = null;
 
 let gameOver = null;
+
+// Used to disable buttons during animation.
 let working = false;
 
 // Which players are which. The values are "X" or "O".
 let myXO = null;
 let computerX0 = null;
 
-const prompt = "<p>Click on a square to make a move</p>";
+// A message area at the bottom of the screen.
+const message = document.getElementById("message");
 
 // Creates the pieces that make up the black lines of the board.
 function blackRectangle(position, width, height) {
@@ -83,7 +89,7 @@ function blackRectangle(position, width, height) {
     return el;
 }
 
-// Will contain references to the nine cell elements in the board.
+// Will contain references to the nine cell elements of the board.
 let cells = []
 {
     // Create the board.
@@ -130,12 +136,12 @@ function playButton() {
         // It does not matter where the first move goes.
         board[Math.floor(Math.random() * 9)] = "X";
     }
-    document.getElementById("message").innerHTML = prompt;
+    message.innerHTML = "<p>Click on a square to make a move</p>";
 
     // Turn off the selector and turn on the board and message.
     document.getElementById("selector").style.display = "none";
     document.getElementById("board").style.display = "grid";
-    document.getElementById("message").style.display = "block";
+    message.style.display = "block";
 
     // Initialize the board.
     for (let i = 0; i < cells.length; ++i) {
@@ -148,10 +154,11 @@ function playButton() {
     window.onbeforeunload = () => "";
 }
 
+// Restarts the game with the player selection dialog.
 function restartButton() {
     document.getElementById("selector").style.display = "block";
     document.getElementById("board").style.display = "none";
-    document.getElementById("message").style.display = "none";
+    message.style.display = "none";
 }
 
 // Rotates a board string 90 degrees counterclockwise.
@@ -218,9 +225,7 @@ function addGoodMoves(board) {
         "$X   XO $", "$X O$    ", "$X OOX$X ", "$X$ $  $ ", "$X$ X $O$",
         "$X$$O$$ $", "$X$OX  O ", "$X$XO $  " ];
     for (let i = 0; i < patterns.length; ++i) {
-        symmetry((b) => {
-            addGoodMoves(b);
-        }, patterns[i]);
+        symmetry((b) => { addGoodMoves(b); }, patterns[i]);
     }
 }
 
@@ -236,6 +241,28 @@ function checkRows(func) {
     func(2, 4, 6);
 }
 
+// Flashes a square to emphasize the computer's move.
+// Returns a promise that will resolve when the animation is over. 
+function blinkSquare(id) {
+    // Disable the buttons during the animation.
+    working = true
+
+    message.style.display = "none";
+    return new Promise((resolve, reject) => {
+        var counter = 0;
+        const interval = setInterval(() => {
+            counter += 1;
+            cells[id].style.display = counter % 2 == 1 ? "none" : "block";
+            if (counter >= 6) {
+                clearInterval(interval);
+                message.style.display = "block";
+                working = false;
+                resolve(null);
+            }
+         }, 100);
+    });
+}
+
 // Returns true if the game is over.
 function checkGameOver(who) {
     let winner = false;
@@ -247,8 +274,7 @@ function checkGameOver(who) {
             winner = true;
         }});
     if (winner) {
-        document.getElementById("message").innerHTML =
-                    `<h3>${who} wins ${restartHTML}</h3>`;
+        message.innerHTML = `<h3>${who} wins ${restartHTML}</h3>`;
         return true;
     }
     for (let i = 0; i < 9; ++i) {
@@ -257,8 +283,7 @@ function checkGameOver(who) {
         }
     }
     // The game ended in a draw.
-    document.getElementById("message").innerHTML =
-                `<h3>Tie game ${restartHTML}</h3>`;
+    message.innerHTML = `<h3>Tie game ${restartHTML}</h3>`;
     return true;
 }
 
@@ -290,11 +315,12 @@ function getComputerMove() {
         moves = checkTwoInARow(myXO);
     }
 
+    // If not, see if the board is in GoodMoves.
     if (moves.length == 0) {
         moves = goodMoves.get(board.join(""));
     }
 
-    // If not, just pick an empty square.
+    // If not, just pick any empty square.
     if (moves === undefined) {
         moves = [];
         for (let i = 0; i < 9; ++i) {
@@ -305,19 +331,18 @@ function getComputerMove() {
     }
 
     // Return one of the moves a random, or null if there is none.
+    // There should always be one. 
     return moves.length == 0 ? null :
         moves[Math.floor(Math.random() * moves.length)];
 }
 
 // Invoked when the user clicks on a square.
 function clickSquare(id) {
-    if (working || gameOver) {
-        return;
-    }
-    if (board[id] != " ") {
+    if (working || gameOver || board[id] != " ") {
         return;
     }
 
+    // Write the player move in both the board and the DOM.
     board[id] = myXO;
     cells[id].innerHTML = myXO == "X" ? xSquare : oSquare;
 
@@ -329,40 +354,17 @@ function clickSquare(id) {
 
     m = getComputerMove();
     if (m !== null) {
-        // Put up a fake progress bar to separate the player's move
-        // from the program's move.
-        working = true;
-        document.getElementById("message").innerHTML =
-`<div style="height:10px; background-color:transparent;"></div>
-<div style="background-color:#ddd;">
-<div id="progressBar" style="width:0; height:15px; background-color:#5c9ec4;">
-</div>
-</div>`
-         const bar = document.getElementById("progressBar");
-         var progress = 0
-            const interval = setInterval(() => {
-                 progress += 3;
-                 if (progress > 100) {
-                   clearInterval(interval);
-                   displayComputerMove(m);
-                   working = false;
-                 } else {
-                   bar.style.width = `${progress}%`;
-                 }
-         }, 10);
-    }
-}
+        // Write the computer move in both the board and the DOM.
+        board[m] = computerXO;
+        cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
 
-function displayComputerMove(m) {
-    board[m] = computerXO;
-    cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
-    working = false;
-            
-    if (checkGameOver(computerXO)) {
-        gameOver = true;
-        window.onbeforeunload = undefined;
-    } else {
-        document.getElementById("message").innerHTML = prompt;
+        // Flash the computer move, and proceed when the animation is over. 
+        blinkSquare(m).then((x)=> {
+            if (checkGameOver(computerXO)) {
+                gameOver = true;
+                window.onbeforeunload = undefined;
+            }
+        });
     }
 }
 
