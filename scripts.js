@@ -1,3 +1,5 @@
+import { checkRows } from "./logic.js"
+
 function squareButton(i) { return `<button onclick="clickSquare(${i})"
 style="display:block; background: transparent; border: none !important;
 font-size:0; height:50px; width:50px;">
