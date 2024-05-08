@@ -97,18 +97,6 @@ function checkTwoInARow(board, who) {
     return moves;
 }
 
-// Returns a random valid move, null if there is none.
-function randomMove(board){
-    moves = [];
-    for (let i = 0; i < 9; ++i) {
-        if (board[i] == " ") {
-            moves.push(i);
-        }
-    }
-    return moves.length == 0 ? null :
-        moves[Math.floor(Math.random() * moves.length)];
-}
-
 // Returns all the possible good computer moves from this position.
 function getComputerMove(board) {
     let count = 0;
