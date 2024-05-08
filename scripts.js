@@ -98,6 +98,9 @@ function playButton() {
     document.getElementById("board").style.display = "grid";
     message.style.display = "block";
 
+    // One splash per customer.
+    document.getElementById("splash").style.display = "none";
+
     // Initialize the board.
     cells.forEach((val, i, a) =>
         a[i].innerHTML = board[i] == " " ? squareButton(i) : xSquare);
