@@ -29,13 +29,20 @@
 <body>
 <h1>Tic-Tac-Toe</h1>
 <div id="selector" style="visibility: visible">
-<p>Would you like to go first or second?</p>
+<div>Would you like to go first or second?</div>
 <label>First (X)
 <input type="radio" name="who" value="first" checked>
 </label><br>
 <label>Second (O)
 <input type="radio" name ="who" value="second">
+</label></p>
+<div>Select a difficulty level:</div>
+<label>Beatable
+<input type="radio" name="difficulty" value="beatable" checked>
 </label><br>
+<label>Unbeatable
+<input type="radio" name ="difficulty" value="unbeatable">
+</label><br><br>
 <div><button onclick="playButton()">Play</button></div>
 </div>
 <div id="board" style="display:none"></div>
