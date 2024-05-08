@@ -1,47 +1,3 @@
-<!DOCTYPE html>
-<!-- Interactive web page that plays Tic-Tac-Toe.
-     The site is this single file.
--->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tic Tac Toe</title>
-<style>
-#board {
-  /* Define the layout of the elements that make up the board */
-  grid-template-columns: 50px 5px 50px 5px 50px;
-  grid-template-rows: 50px 5px 50px 5px 50px;
-  grid-gap: 0;
-  grid-template-areas:
-      'cell0 vbar0 cell1 vbar1 cell2'
-      'hbar0 hbar0 hbar0 hbar0 hbar0'
-      'cell3 vbar2 cell4 vbar3 cell5'
-      'hbar1 hbar1 hbar1 hbar1 hbar1'
-      'cell6 vbar4 cell7 vbar5 cell8';
-}
-#message {
-  text-align: center;
-  width: 160px
-}
-</style>
-</head>
-<body>
-<h1>Tic-Tac-Toe</h1>
-<div id="selector" style="visibility: visible">
-<p>Would you like to go first or second?</p>
-<label>First (X)
-<input type="radio" name="who" value="first" checked>
-</label><br>
-<label>Second (O)
-<input type="radio" name ="who" value="second">
-</label><br>
-<div><button onclick="playButton()">Play</button></div>
-</div>
-<div id="board" style="display:none"></div>
-<div id="message" style="display: none"></div>
-<script>
-
 function squareButton(i) { return `<button onclick="clickSquare(${i})"
 style="display:block; background: transparent; border: none !important;
 font-size:0; height:50px; width:50px;">
@@ -367,7 +323,3 @@ function clickSquare(id) {
         });
     }
 }
-
-</script>
-</body>
-</html>
