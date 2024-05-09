@@ -1,149 +1,3 @@
-function squareButton(i) { return `<button onclick="clickSquare(${i})"
-style="display:block; background: transparent; border: none !important;
-font-size:0; height:50px; width:50px;">
-</button>`;
-}
-
-const svgHdr =
-    `<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">` 
-
-// Use Scalable Vector Graphics to an X on the board.
-const xSquare = `${svgHdr} 
-<path d="M 5 5 L 45 45 M 45 5 L 5 45" style="stroke:blue; stroke-width:4" />
-</svg>`
-
-// Use Scalable Vector Graphics to an O on the board.
-const oSquare = `${svgHdr}
-<ellipse cx="25" cy="25", rx="20", ry="20"
-style="fill:none; stroke:blue; stroke-width:4" />
-</svg>`
-
-// Displayed when the game is over.
-const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
-
-// A message area at the bottom of the screen.
-const message = document.getElementById("message");
-
-// Creates the pieces that make up the black lines of the board.
-function blackRectangle(position, width, height) {
-    const el = document.createElement("div");
-    el.style =
-    `${position}; width:${width}px; height:{$height}px; background-color:black;`
-    return el;
-}
-
-// Will contain references to the nine cell elements of the board.
-let cells = []
-{
-    // Create the board.
-    const board = document.getElementById("board");
-
-    // The order does not matter here, since each element gets
-    // a grid-area style that specifies its position in the grid.
-
-    // Create the cells, containers that will hold buttons, Xs or Os.
-    for (let i = 0; i < 9; ++i) {
-        const el = document.createElement("div");
-        el.style =`grid-area:cell${i}`;
-        cells.push(el);
-        board.appendChild(el);
-    }
-
-    // Create the vertical bars that separate the cells on each row.
-    for (let i = 0; i < 6; ++i) {
-        board.appendChild(blackRectangle(`grid-area:vbar${i}`, "5", "50"));
-    }
-
-    // Create the horizonal bars that separate the cells on each row.
-    for (let i = 0; i < 2; ++i) {
-        board.appendChild(blackRectangle(`grid-area:hbar${i}`, "160", "5"));
-    }
-}
-
-// Function invoked by the initial dialog. It initializes and starts the game.
-function playButton() {
-    switch (document.querySelector("input[name=who]:checked").value) {
-        // Record the human and computer's pieces.
-        case "first":
-            globalThis.humanXO = "X";
-            globalThis.computerXO = "O";
-            break;
-        case "second":
-            globalThis.humanXO = "O";
-            globalThis.computerXO = "X";
-            break;
-    }
-    switch (document.querySelector("input[name=difficulty]:checked").value) {
-        case "beatable":
-            globalThis.beatable = true;
-            break;
-        case "unbeatable":
-            globalThis.beatable = false;
-            break;
-    }
-
-    // Array representation of the board. Values are "X", "O", and " ".
-    // It is kept consistent with the cell elements in the DOM.
-    globalThis.board = Array.from(" ".repeat(9));
-
-    globalThis.gameOver = false;
-
-    // Used to disable buttons during animation.
-    globalThis.working = false;
-
-    message.innerHTML = "<p>Click on a square to make a move</p>";
-
-    // Turn off the selector and turn on the board and message.
-    document.getElementById("selector").style.display = "none";
-    document.getElementById("board").style.display = "grid";
-    message.style.display = "block";
-
-    // One splash per customer.
-    document.getElementById("splash").style.display = "none";
-
-    // Initialize the board.
-    cells.forEach((val, i, a) =>
-        a[i].innerHTML = board[i] == " " ? squareButton(i) : xSquare);
-
-    // Add a warning on reload, since that will restart the game.
-    // The value of the string returned does not appear to matter,
-    // and I know no way to change the generic warning message.
-    window.onbeforeunload = () => "";
-
-    if (computerXO == "X") {
-        MakeComputerMove();
-    }
-}
-
-// Restarts the game with the player selection dialog.
-function restartButton() {
-    document.getElementById("selector").style.display = "block";
-    document.getElementById("board").style.display = "none";
-    message.style.display = "none";
-}
-
-// Flashes a square to emphasize the computer's move.
-// Returns a promise that will resolve when the animation is over. 
-function blinkSquare(id) {
-    // Disable the buttons during the animation.
-    working = true
-
-    message.style.display = "none";
-    return new Promise((resolve, reject) => {
-        var counter = 0;
-        const interval = setInterval(() => {
-            counter += 1;
-            cells[id].style.display = counter % 2 == 1 ? "none" : "block";
-            if (counter >= 6) {
-                clearInterval(interval);
-                message.style.display = "block";
-                working = false;
-                resolve(null);
-            }
-         }, 100);
-    });
-}
-
 // Calls func on horizontal, vertical, and diagonal rows.
 function checkRows(func) {
     func(0, 1, 2);
@@ -296,7 +150,10 @@ function numberFilled(board) {
 }
 
 // Returns all the possible computer moves from this position.
-function getComputerMoves(board) {
+// beatable indicates which table to use. 
+// if we can't find a move using badMoves and fallback is set,
+// then we also try goodMoves.
+function getComputerMoves(board, beatable, fallback) {
     if (numberFilled(board) % 2 == 0) {
         var me = 'X';
         var him = 'O';
@@ -307,10 +164,12 @@ function getComputerMoves(board) {
 
     // See if the computer can win right now.
     let moves = checkTwoInARow(board, me);
+    let debug = "win";
 
     // If not, see if it needs to block.
     if (moves.length == 0) {
         moves = checkTwoInARow(board, him);
+        debug = "block"
     }
 
     // If not, see if the board is the strategy table(s).
@@ -318,32 +177,46 @@ function getComputerMoves(board) {
         let lookupKey = board.join('');
         if (beatable) {
             moves = badMoves.get(lookupKey);
-            if (moves === undefined) {
+            debug = "bad table";
+            if (moves === undefined && fallback) {
                 moves = goodMoves.get(lookupKey);
+                debug = "good table";
             }
         } else {
             moves = goodMoves.get(lookupKey);
+            debug = "good table";
         }
     }
-
-    // If not, find all the empty squares.
-    if (moves === undefined) {
-        moves = [];
-        board.forEach((s, i) => {
-            if (s == ' ') {
-                moves.push(i);
-            }
-        });
-    }
+    /* const fff = (m)=>`${m}`;
+    console.log(`${debug}: ${moves.map(fff).join(", ")}`); */
     return moves;
 }
 
-function MakeComputerMove() {
-    moves = getComputerMoves(board);
-    if (moves.length > 0) {
-        // Choose one of the moves at random.
-        let m = moves[Math.floor(Math.random() * moves.length)];
+function emptySquares(board) {
+    moves = [];
+    board.forEach((s, i) => {
+        if (s == ' ') {
+            moves.push(i);
+        }
+    });
+    return moves;
+}
 
+// Returns a random element of an array, or null if the array is empty.
+function randomElement(arr) {
+    return arr.length == 0 ? undefined :
+        arr[Math.floor(Math.random() * arr.length)];
+}
+
+function MakeComputerMove() {
+    moves = getComputerMoves(board, beatable, /*fallback=*/true);
+
+    // If the algorithm couldn't find a move, choose one at random.
+    if (moves === undefined) {
+        moves = emptySquares(board);
+    }
+    let m = randomElement(moves);
+    if (m !== undefined) {
         // Write the computer move in both the board and the DOM.
         board[m] = computerXO;
         cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
@@ -375,4 +248,12 @@ function clickSquare(id) {
     }
 
     MakeComputerMove();
+}
+
+// Make functions visible to to the tests, which run under node.js.
+if (typeof exports != "undefined") {
+    exports.getComputerMoves = getComputerMoves;
+    exports.emptySquares = emptySquares;
+    exports.checkRows = checkRows;
+    exports.randomElement = randomElement;
 }

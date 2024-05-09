@@ -1,4 +1,4 @@
-const logic = require('./logic.js');
+const logic = require('./scripts.js');
 
 function printBoard(board) {
     console.log(` ${board[0]} | ${board[1]} | ${board[2]}`);
@@ -31,14 +31,27 @@ function boardFull(board) {
     return count == 0;
 }
 
+function getComputerMove(board) {
+    let moves = logic.getComputerMoves(board, false, true);
+    if (moves === undefined) {
+        moves = logic.emptySquares(board);
+    }
+    let move = logic.randomElement(moves);
+    if (move === undefined) {
+        throw new Error("Computer found no move");
+    }
+    return move;
+}
+
 function playGame() {
     board = Array(9).fill(" ");
     let me = "X";
     let him = "O";
     for (;;) {
-        let m = logic.getOptimalMove(board);
+        let m = getComputerMove(board);
         if (board[m] != " ") {
             console.log(`invalid move ${m}`);
+            printBoard(board);
             throw new Error("invalid move");
         }
         board[m] = me;
@@ -54,16 +67,11 @@ function playGame() {
 
 // Returns a random valid move, null if there is none.
 function randomMove(board) {
-    moves = [];
-    for (let i = 0; i < board.length; ++i) {
-        if (board[i] == " ") {
-            moves.push(i);
-        }
-    }
-    if (moves.length == 0) {
+    move = logic.randomElement(logic.emptySquares(board));
+    if (move === undefined) {
         throw new error("There is no move");
     }
-    return moves[Math.floor(Math.random() * moves.length)];
+    return move;
 }
 
 function randGame() {
@@ -72,7 +80,7 @@ function randGame() {
     let him = "O";
     for (;;) {
         if (me == "X") {
-            var m = logic.getOptimalMove(board);
+            var m = getComputerMove(board);
         } else {
             var m = randomMove(board);
         }
@@ -103,7 +111,7 @@ function numberFilled(board) {
 function exploreThrowHumanO(board) {
     newboard = [...board]
     // Get all the X moves.
-    moves = logic.getThrowMoves(newboard);
+    moves = logic.getComputerMoves(newboard, true, false);
     if (moves === undefined) {
         return false;
     }
@@ -148,7 +156,7 @@ function exploreThrowHumanO(board) {
 function exploreThrowHumanX(board) {
     newboard = [...board]
     // Get all the O moves.
-    moves = logic.getThrowMoves(newboard);
+    moves = logic.getComputerMoves(newboard, true, false);
     if (moves === undefined) {
         return false;
     }
@@ -201,7 +209,7 @@ function exploreGame(board, turn) {
     if (has_bad) {
         throw_trace.push(turn);
     }
-    logic.getOptimalMoves(board).forEach((m) => {
+    getComputerMoves(board).forEach((m) => {
         move_trace.push(m);
         board[m] = "X";
         if (hasWinner(board)) {
@@ -214,7 +222,7 @@ function exploreGame(board, turn) {
             printBoard(board);
             throw new Error("Could not throw");
         } else {
-            logic.getOptimalMoves(board).forEach((i) => {
+            logic.getComputerMoves(board).forEach((i) => {
                 move_trace.push(i)
                 board[i] = "O";
                 if (hasWinner(board)) {
@@ -243,7 +251,7 @@ function exploreGame(board, turn) {
     }
 }
 
-function exploreTest() {
+function testBeatable() {
     board = Array(9).fill(" ");
     let success = exploreThrowHumanO(board);
     if (!success) {
@@ -256,11 +264,11 @@ function exploreTest() {
         board[i] = "X";
         success = exploreThrowHumanX(board);
         if (!success) {
-            throw new Error("Human O didn't win");
+            throw new Error("Human X didn't win");
         }
         board[i] = " ";
     }
-    logic.report(printBoard);
+    // logic.report(printBoard);
 }
 
 const iterations = 100000;
@@ -273,6 +281,6 @@ for (let i = 0; i < iterations; ++i) {
         throw new Error("How did O win?");
     }
 }
-exploreTest();
+testBeatable();
 
 console.log("Test passed");
