@@ -45,11 +45,14 @@ I built mine using JavaScript.<br>Enjoy!
 <input type="radio" name ="who" value="second">
 </label></p>
 <div>Select a difficulty level:</div>
-<label>Beatable
-<input type="radio" name="difficulty" value="beatable" checked>
+<label>Easy
+<input type="radio" name="difficulty" value="easy" checked>
 </label><br>
-<label>Unbeatable
-<input type="radio" name ="difficulty" value="unbeatable">
+<label> Difficult
+<input type="radio" name="difficulty" value="difficult">
+</label><br>
+<label>Impossible
+<input type="radio" name ="difficulty" value="impossible">
 </label><br><br>
 <div><button onclick="playButton()">Play</button></div>
 </div>
@@ -133,10 +136,13 @@ function playButton() {
             break;
     }
     switch (document.querySelector("input[name=difficulty]:checked").value) {
-        case "beatable":
+        case "easy":
             globalThis.beatable = true;
             break;
-        case "unbeatable":
+        case "difficult":
+            globalThis.beatable = Math.random() < 0.5;
+            break;
+        case "impossible":
             globalThis.beatable = false;
             break;
     }

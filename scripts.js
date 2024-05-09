@@ -167,12 +167,10 @@ function getComputerMoves(board, beatable, fallback) {
 
     // See if the computer can win right now.
     let moves = checkTwoInARow(board, me);
-    let debug = "win";
 
     // If not, see if it needs to block.
     if (moves.length == 0) {
         moves = checkTwoInARow(board, him);
-        debug = "block"
     }
 
     // If not, see if the board is the strategy table(s).
@@ -180,18 +178,13 @@ function getComputerMoves(board, beatable, fallback) {
         let lookupKey = board.join('');
         if (beatable) {
             moves = badMoves.get(lookupKey);
-            debug = "bad table";
             if (moves === undefined && fallback) {
                 moves = goodMoves.get(lookupKey);
-                debug = "good table";
             }
         } else {
             moves = goodMoves.get(lookupKey);
-            debug = "good table";
         }
     }
-    /* const fff = (m)=>`${m}`;
-    console.log(`${debug}: ${moves.map(fff).join(", ")}`); */
     return moves;
 }
 
