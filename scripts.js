@@ -87,6 +87,7 @@ function addMoves(board, table) {
     // Each $ represents an acceptable next move.
     // Each good move has eight reflections and rotations.
     // If a board position is not listed, then any move is acceptable.
+    /* beautify preserve:start */
     const patterns = [
         "X   $    ", "X   $O X ", "X  $$X$ O", "X $   $ O", "X $ $O$  ",
         "X $ X $ O", "X O    X$", "X O$  $ $", "X O$ X  O", "X O$$X   ",
@@ -102,27 +103,28 @@ function addMoves(board, table) {
         " X$O X O ", " X$OOX   ", "$ $ X $ $", "$O$$X$$ $", "$X    O  ",
         "$X   XO $", "$X O$    ", "$X OOX$X ", "$X$ $  $ ", "$X$ X $O$",
         "$X$$O$$ $", "$X$OX  O ", "$X$XO $  " ];
+    /* beautify preserve:end */
     patterns.forEach((p) => symmetry((b) => addMoves(b, goodMoves), p));
 }
 
 {
-  // These patterns have the same syntax, but represent opportunities
-  // for the program to let the Wookiee win.
-  const patterns = [
-    ' O  X  $ ', ' X $$$ O ', ' X $O$$$$', ' X $X$ O ', ' X O $$ $',
-    ' X OX$ O ', ' X X$O O ', ' X XO$ $$', ' X XOO $ ', '$$$$$$$$$',
-    '$$$$X$$$$', '$X X$O$$ ', '$X$$$$$$$', 'O   $X X$', 'O$   X$$ ',
-    'OX X O$  ', 'OX$  X $$', 'OX$  X O ', 'OX$ X  O ', 'OX$$ $$ $',
-    'OX$X $$$$', 'OXOX $$$ ', 'X    $ $O', 'X    O $ ', 'X   O$ $ ',
-    'X  $OX  O', 'X  $OX$  ', 'X $ O $ X', 'X $$ X$O ', 'X$ $X$ $O',
-    'X$$$ X  O', 'X$$$$$$$$', 'X$O  $ $ ', 'X$O  X  O', 'X$O  X O$',
-    'X$O  X$XO', 'X$O$ X$$$', 'X$O$$$$X ', 'XO $ XO  ', 'XO$  $   ',
-    'XO$  X  O', 'XO$  X XO', 'XO$$ X$ $', 'XO$$ XOX ', 'XO$$$$$X$',
-    'XO$$OX X ', 'XO$O$X$X ', 'XOO  X  $', 'XOO$$X$X$', 'XOX$  O  ',
-    'XOX$  OX ', 'XOX$ $$ $', 'XOXO  $  ', 'XOXO $$X ', 'XXO$  $  ',
-    'XXO$$$ O ', 'XXOO  $$$', 'XXOO X$  '
-  ];
-  patterns.forEach((p) => symmetry((b) => addMoves(b, badMoves), p));
+    // These patterns have the same syntax, but represent opportunities
+    // for the program to let the Wookiee win.
+    /* beautify preserve:start */
+    const patterns = [
+        '$$$$$$$$$', 'X$$$$$$$$', '$X$$$$$$$', '$$$$X$$$$', 'XO$$ $   ',
+        'X$O  $$  ', 'X  $ O $ ', 'X$$$ $$$O', 'OX$$ $$ $', 'O$   X  $',
+        '$X O$$$$$', ' X $O$ $ ', '$X$$$$ O ', ' O $X$ $ ', 'XXO$     ',
+        'XOX$ $$ $', 'XO$$$X$ $', 'XO$$$$$X$', 'X$O$ X $$', 'X$O$   X$',
+        'X$ $X   O', 'X$ $OX   ', 'X $$ X O$', 'X$$$ X$$O', 'OX$X $$$ ',
+        'OX$$ X $ ', ' X XO$ $ ', '$X$X$O$$ ', ' X $X$ O ', 'XXOO  $  ',
+        'XXO  $ O ', 'XOX$  O  ', 'XO$  X  O', 'X$O  X O ', 'X$O  X  O',
+        'OXOX  $  ', 'OX X O$  ', ' X XOO $ ', ' X X$O O ', ' X OX$ O ',
+        'XOXO  $X ', 'XOX$  OX ', 'XOO$ X X$', 'XO$O$X$X ', 'XO $OX X ',
+        'XO $ XOX ', 'XO$  X XO', 'X$O  X XO',
+    ];
+    /* beautify preserve:end */
+    patterns.forEach((p) => symmetry((b) => addMoves(b, badMoves), p));
 }
 
 // If a row contains two whos in a row and a space, returns
@@ -139,7 +141,8 @@ function checkTwoInARow(board, who) {
             moves.push(y);
         } else if (bz == " " && bx == who && by == who) {
             moves.push(z);
-        }});
+        }
+    });
     return moves;
 }
 
@@ -209,7 +212,7 @@ function randomElement(arr) {
 }
 
 function MakeComputerMove() {
-    moves = getComputerMoves(board, beatable, /*fallback=*/true);
+    moves = getComputerMoves(board, beatable, /*fallback=*/ true);
 
     // If the algorithm couldn't find a move, choose one at random.
     if (moves === undefined) {
@@ -222,7 +225,7 @@ function MakeComputerMove() {
         cells[m].innerHTML = computerXO == "X" ? xSquare : oSquare;
 
         // Flash the computer move, and proceed when the animation is over. 
-        blinkSquare(m).then((x)=> {
+        blinkSquare(m).then((x) => {
             if (checkGameOver()) {
                 gameOver = true;
                 window.onbeforeunload = undefined;
