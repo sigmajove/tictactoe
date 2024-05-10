@@ -24,6 +24,9 @@
   text-align: center;
   width: 160px
 }
+input[type="radio"] {
+  vertical-align: text-top;
+}
 </style>
 </head>
 <body>
@@ -43,13 +46,13 @@ I built mine using JavaScript.<br>Enjoy!
 </label><br>
 <label>Second (O)
 <input type="radio" name ="who" value="second">
-</label></p>
+</label><br><br>
 <div>Select a difficulty level:</div>
 <label>Easy
 <input type="radio" name="difficulty" value="easy" checked>
 </label><br>
-<label> Difficult
-<input type="radio" name="difficulty" value="difficult">
+<label> Challenging 
+<input type="radio" name="difficulty" value="challenging">
 </label><br>
 <label>Impossible
 <input type="radio" name ="difficulty" value="impossible">
@@ -139,7 +142,7 @@ function playButton() {
         case "easy":
             globalThis.beatable = true;
             break;
-        case "difficult":
+        case "challenging":
             globalThis.beatable = Math.random() < 0.5;
             break;
         case "impossible":
