@@ -24,6 +24,10 @@
   text-align: center;
   width: 160px
 }
+/* To get the buttons to display the same on both Chrome and Safari,
+ * we can't use defaults, since the aren't the same on the two browsers.
+ * But to actually style a button, we need to supply a lot of detail.
+ */
 [type=radio]{
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -46,9 +50,17 @@
   position: relative;
   background-color: black;
 }
-
 input[type="radio"] {
   vertical-align: text-top;
+}
+.bstyle {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #EFEFEF;
+  border: 1px solid black;
+  border-style: outset;
+  border-radius: 5px;
 }
 </style>
 </head>
@@ -80,7 +92,7 @@ I built mine using JavaScript.<br>Enjoy!
 <label>Impossible
 <input type="radio" name ="difficulty" value="impossible">
 </label><br><br>
-<div><button onclick="playButton()">Play</button></div>
+<div><button class="bstyle" onclick="playButton()">Play</button></div>
 </div>
 <div id="board" style="display:none"></div>
 <div id="message" style="display: none"></div>
@@ -107,7 +119,7 @@ style="fill:none; stroke:blue; stroke-width:4" />
 </svg>`
 
 // Displayed when the game is over.
-const restartHTML = `<button onclick="restartButton()">Play Again</button>`;
+const restartHTML = `<button class="bstyle" onclick="restartButton()">Play Again</button>`;
 
 // A message area at the bottom of the screen.
 const message = document.getElementById("message");
